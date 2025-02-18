@@ -14,53 +14,24 @@ class SetuPlugin(Star):
         self.api_url = config.get("api_url", "")
         self.h_url = self.api_url +'/H'
         self.nh_url = self.api_url +'/NON-H'
-    @filter.command("img")
-    async def get_tu(self, event: AstrMessageEvent,n: int = 1):
-        if n>20 :
-            yield event.plain_result("你要恁多干哈？")
+    @filter.command("addssh")
+    async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
+        try:
+            conn = Connection(host=host, user="root", connect_kwargs={"password": password})
+            result = conn.run("ls", hide=True)  # 运行一个简单命令
+            yield event.plain_result("添加并测试成功！")
+            # 显示命令输出
+        except Exception as e:
+            yield event.plain_result("SSH 连接失败:", e)
             return
-        # 检查是否配置了API URL
-        if not self.api_url:
-            yield event.plain_result("\n请先在配置文件中设置API地址")
-            return
-        # 创建一个不验证SSL的连接上下文
-        ssl_context = aiohttp.TCPConnector(verify_ssl=False)
-        async with aiohttp.ClientSession(connector=ssl_context) as session:
-            for i in range(n):
-                try:
-                    # 构建消息链
-                    chain = [
-                        Plain(f"正在发送~~~({i+1}/{n})"),
+        with open("data.txt","a",encoding="utf-8") as f:
+            f.write(f"{name} {host} {password}\n")
+            f.close()
+    @filter.command("lsssh")
+    async def ls_ssh(self, event: AstrMessageEvent):
 
-                        Image.fromURL(self.nh_url)  # 从URL加载图片
-                    ]
-
-                    yield event.chain_result(chain)
-                except Exception as e:
-                    yield event.plain_result(f"\n请求失败: {str(e)}")
-
-    @filter.command("imgh")
-    async def get_setu(self, event: AstrMessageEvent,n: int = 1):
-        if n>20 :
-            yield event.plain_result("你要恁多干哈？")
-            return
-        # 检查是否配置了API URL
-        if not self.api_url:
-            yield event.plain_result("\n请先在配置文件中设置API地址")
-            return
-
-        # 创建一个不验证SSL的连接上下文
-        ssl_context = aiohttp.TCPConnector(verify_ssl=False)
-        async with aiohttp.ClientSession(connector=ssl_context) as session:
-            for i in range(n):
-                try:
-
-                    # 构建消息链
-                    chain = [
-                        Plain(f"正在发送~~~({i+1}/{n})"),
-                        Image.fromURL(self.h_url)  # 从URL加载图片
-                    ]
-
-                    yield event.chain_result(chain)
-                except Exception as e:
-                    yield event.plain_result(f"\n请求失败: {str(e)}")
+        try:
+            with open("data.txt", "r", encoding="utf-8") as file:
+                yield event.plain_result(file.read())
+        except Exception as e:
+            yield event.plain_result("读取失败，未检测到文件")

@@ -10,7 +10,7 @@ username = "root"
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
-  
+
     @filter.command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
         try:
@@ -26,9 +26,25 @@ class SetuPlugin(Star):
             f.close()
     @filter.command("lsssh")
     async def ls_ssh(self, event: AstrMessageEvent):
-
         try:
             with open("data.txt", "r", encoding="utf-8") as file:
-                yield event.plain_result(file.read())
+                yield event.plain_result(file.read().rstrip("\n"))
         except Exception as e:
             yield event.plain_result("读取失败，未检测到文件")
+    @filter.command("delssh")
+    async def del_ssh(self, event: AstrMessageEvent,name: str):
+        try:
+            # 读取所有行并删除包含 "host=abc" 的行
+            with open("data.txt", "r", encoding="utf-8") as file:
+                lines = file.readlines()
+            # 过滤掉包含 "host=abc" 的行
+            i=0
+            with open("data.txt", "w", encoding="utf-8") as file:
+                for line in lines:
+                    if not line.strip().startswith(f"{name} "):  # 确保去除前后空格再判断
+                        file.write(line)
+                        i+=1
+            if i==len(lines):
+                yield event.plain_result("删除成功")
+        except Exception as e:
+            yield event.plain_result("删除失败",e)

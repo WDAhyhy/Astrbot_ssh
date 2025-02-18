@@ -46,5 +46,7 @@ class SetuPlugin(Star):
                         i+=1
             if i==len(lines)-1:
                 yield event.plain_result("删除成功")
+            else:
+                yield event.plain_result("删除失败，无以此名称的ssh连接")
         except Exception as e:
             yield event.plain_result("删除失败",e)

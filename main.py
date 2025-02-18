@@ -8,12 +8,9 @@ username = "root"
 
 @register("fish_ssh", "案板上的鹹魚", "ssh远程服务器", "1.0")
 class SetuPlugin(Star):
-    def __init__(self, context: Context, config: dict):
+    def __init__(self, context: Context):
         super().__init__(context)
-        self.config = config
-        self.api_url = config.get("api_url", "")
-        self.h_url = self.api_url +'/H'
-        self.nh_url = self.api_url +'/NON-H'
+  
     @filter.command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
         try:

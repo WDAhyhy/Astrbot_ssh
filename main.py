@@ -44,7 +44,7 @@ class SetuPlugin(Star):
                     if not line.strip().startswith(f"{name} "):  # 确保去除前后空格再判断
                         file.write(line)
                         i+=1
-            if i==len(lines):
+            if i==len(lines)-1:
                 yield event.plain_result("删除成功")
         except Exception as e:
             yield event.plain_result("删除失败",e)

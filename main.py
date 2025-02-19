@@ -11,6 +11,7 @@ class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
 
+    @permission_type(PermissionType.ADMIN)
     @filter.command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
         try:
@@ -24,6 +25,8 @@ class SetuPlugin(Star):
         with open("data.txt","a",encoding="utf-8") as f:
             f.write(f"{name} {host} {password}\n")
             f.close()
+
+    @permission_type(PermissionType.ADMIN)
     @filter.command("lsssh")
     async def ls_ssh(self, event: AstrMessageEvent):
         try:
@@ -31,6 +34,8 @@ class SetuPlugin(Star):
                 yield event.plain_result(file.read().rstrip("\n"))
         except Exception as e:
             yield event.plain_result("读取失败，未检测到文件")
+
+    @permission_type(PermissionType.ADMIN)
     @filter.command("delssh")
     async def del_ssh(self, event: AstrMessageEvent,name: str):
         try:
@@ -47,6 +52,16 @@ class SetuPlugin(Star):
             if i==len(lines)-1:
                 yield event.plain_result("删除成功")
             else:
-                yield event.plain_result("删除失败，无以此名称的ssh连接")
+                yield event.plain_result("删除失败，无此名称的ssh连接")
         except Exception as e:
             yield event.plain_result("删除失败",e)
+
+    @permission_type(PermissionType.ADMIN)
+    @filter.command("ssh")
+    async  def my_ssh(self, event: AstrMessageEvent,name: str):
+        with open("data.txt", "r", encoding="utf-8") as file:
+            for line in file:
+                if line.strip().startswith(f"{name} "):
+                    name,host,password = line.strip().split(" ")
+                    conn = Connection(host=host, user="root", connect_kwargs={"password": password})
+                    break

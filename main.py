@@ -13,7 +13,7 @@ class SetuPlugin(Star):
         super().__init__(context)
 
 
-    @filter.command("addssh")
+    @command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
         try:
             conn = Connection(host=host, user="root", connect_kwargs={"password": password})
@@ -28,7 +28,7 @@ class SetuPlugin(Star):
             f.close()
 
     @permission_type(PermissionType.ADMIN)
-    @filter.command("lsssh")
+    @command("lsssh")
     async def ls_ssh(self, event: AstrMessageEvent):
         try:
             with open("data.txt", "r", encoding="utf-8") as file:
@@ -37,7 +37,7 @@ class SetuPlugin(Star):
             yield event.plain_result("读取失败，未检测到文件")
 
 
-    @filter.command("delssh")
+    @command("delssh")
     async def del_ssh(self, event: AstrMessageEvent,name: str):
         try:
             # 读取所有行并删除包含 "host=abc" 的行

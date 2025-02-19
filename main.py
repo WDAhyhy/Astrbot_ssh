@@ -7,6 +7,7 @@ from datetime import datetime
 from astrbot.api.event.filter import *
 from astrbot.api.event import AstrMessageEvent, MessageEventResult
 from astrbot.api.all import *  # 导入所有API
+import asyncio
 import time
 
 @register("fish_ssh", "案板上的鹹魚", "ssh远程服务器", "1.0")
@@ -17,7 +18,7 @@ class SetuPlugin(Star):
         self.all_host=[]
         self.update_host()
         self.now_ssh={}
-        self.open=False
+        self.stop_event = asyncio.Event()  # 控制 SSH 连接
         self.conn=None
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("addssh")
@@ -78,9 +79,10 @@ class SetuPlugin(Star):
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
                     self.now_ssh["password"] = item.get('password')
-                    self.open=True
-                    while self.open:
-                        time.sleep(10)
+
+                    while not self.stop_event.is_set():
+                        await asyncio.sleep(1)
+                    await event.plain_result("SSH 连接已断开")
                 except Exception as e:
                     yield event.plain_result("连接失败",e)
                 break

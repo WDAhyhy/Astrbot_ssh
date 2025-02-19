@@ -8,7 +8,7 @@ host = "31.56.123.4"
 username = "root"
 
 @register("fish_ssh", "案板上的鹹魚", "ssh远程服务器", "1.0")
-@permission_type(PermissionType.ADMIN)
+
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -60,7 +60,7 @@ class SetuPlugin(Star):
             yield event.plain_result("删除失败",e)
 
 
-    @filter.command("ssh")
+    @command("ssh")
     async  def my_ssh(self, event: AstrMessageEvent,name: str):
         with open("data.txt", "r", encoding="utf-8") as file:
             for line in file:
@@ -68,3 +68,8 @@ class SetuPlugin(Star):
                     name,host,password = line.strip().split(" ")
                     conn = Connection(host=host, user="root", connect_kwargs={"password": password})
                     break
+
+    @permission_type(PermissionType.ADMIN)
+    @command("test")
+    async def test(self, event: AstrMessageEvent):
+        pass

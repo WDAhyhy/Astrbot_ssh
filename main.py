@@ -101,7 +101,7 @@ class SetuPlugin(Star):
         try:
             if com.startswith("screen -s wx"):
                 yield event.plain_result("创建screen")
-                result = self.conn.run( com, hide=True)
+                result = self.conn.run( "screen -S wx", hide=True)
                 yield event.plain_result("指令执行成功")
                 yield event.plain_result(result.stdout.rstrip('\n'))
             else:

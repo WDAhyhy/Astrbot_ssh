@@ -84,7 +84,7 @@ class SetuPlugin(Star):
     @command("cmd")
     async def cmd(self, event: AstrMessageEvent, com: str):
         try:
-            com=com.sub(r"^\[|\]$", "", com)
+            com=re.sub(r"^\[|\]$", "", com)
             conn = Connection(host=self.now_ssh.get("host"), user="root", connect_kwargs={"password": self.now_ssh.get('password')})
             result = conn.run(com, hide=True)
             yield event.plain_result(result.stdout.rstrip("\n"))

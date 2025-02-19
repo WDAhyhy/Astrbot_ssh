@@ -93,6 +93,8 @@ class SetuPlugin(Star):
                 except Exception as e:
                     yield event.plain_result("连接失败"+str(e))
                 break
+        if item.get("name") != name:
+            yield event.plain_result("未找到该host")
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("cmd")
     async def cmd(self, event: AstrMessageEvent, com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):

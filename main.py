@@ -17,6 +17,7 @@ class SetuPlugin(Star):
         super().__init__(context)
         self.all_host=[]
         self.update_host()
+        self.now_ssh={}
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
@@ -73,9 +74,22 @@ class SetuPlugin(Star):
                 try:
                     conn = Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
                     yield event.plain_result("成功连接")
+                    self.now_ssh["name"] = item.get("name")
+                    self.now_ssh["host"] = item.get("host")
+                    self.now_ssh["password"] = item.get('password')
                 except Exception as e:
                     yield event.plain_result("连接失败",e)
                 break
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
+    @command("cmd")
+    async def cmd(self, event: AstrMessageEvent, com: str):
+        try:
+            com=com.sub(r"^\[|\]$", "", com)
+            conn = Connection(host=self.now_ssh.get("host"), user="root", connect_kwargs={"password": self.now_ssh.get('password')})
+            result = conn.run(com, hide=True)
+            yield event.plain_result(result.stdout.rstrip("\n"))
+        except Exception as e:
+            yield event.plain_result("执行命令失败",e)
     def update_host(self):
         new_host=[]
         with open("data.txt", "r", encoding="utf-8") as file:

@@ -92,9 +92,9 @@ class SetuPlugin(Star):
         try:
             com=re.sub(r"^\[|\]$", "", com)
             result = await asyncio.to_thread(self.conn.run, com, hide=True)
-            await event.plain_result(result.stdout.rstrip("\n"))
+            yield event.plain_result(result.stdout.rstrip("\n"))
         except Exception as e:
-            await event.plain_result("执行命令失败",e)
+            yield event.plain_result("执行命令失败",e)
     def update_host(self):
         new_host=[]
         with open("data.txt", "r", encoding="utf-8") as file:

@@ -8,6 +8,7 @@ host = "31.56.123.4"
 username = "root"
 
 @register("fish_ssh", "案板上的鹹魚", "ssh远程服务器", "1.0")
+@permission_type(PermissionType.ADMIN)
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -27,8 +28,9 @@ class SetuPlugin(Star):
             f.write(f"{name} {host} {password}\n")
             f.close()
 
-    @permission_type(PermissionType.ADMIN)
+
     @command("lsssh")
+
     async def ls_ssh(self, event: AstrMessageEvent):
         try:
             with open("data.txt", "r", encoding="utf-8") as file:

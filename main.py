@@ -27,7 +27,7 @@ class SetuPlugin(Star):
             conn = Connection(host=host, user="root", connect_kwargs={"password": password})
             result = conn.run("ls", hide=True)  # 运行一个简单命令
             yield event.plain_result("添加并测试成功！")
-            self.update_host()
+
             # 显示命令输出
         except Exception as e:
             yield event.plain_result("SSH 连接失败:", e)
@@ -35,6 +35,7 @@ class SetuPlugin(Star):
         with open("data.txt","a",encoding="utf-8") as f:
             f.write(f"{name} {host} {password}\n")
             f.close()
+            self.update_host()
 
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("lsssh")
@@ -93,7 +94,8 @@ class SetuPlugin(Star):
                 except Exception as e:
                     yield event.plain_result("连接失败"+str(e))
                 break
-        if item.get("name") != name:
+            lastname = item.get("name")
+        if lastname != name:
             yield event.plain_result("未找到该host")
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("cmd")

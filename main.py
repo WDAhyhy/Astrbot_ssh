@@ -81,6 +81,8 @@ class SetuPlugin(Star):
                     self.channel = self.ssh.invoke_shell()
                     # self.conn=Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
                     yield event.plain_result("成功连接")
+                    self.channel.send("bind 'set enable-bracketed-paste off'\n")
+                    self.channel.send("stty -echo\n")
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
                     self.now_ssh["password"] = item.get('password')

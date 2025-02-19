@@ -103,7 +103,7 @@ class SetuPlugin(Star):
         try:
                 self.channel.send(com+'\n')
                 await asyncio.sleep(1)
-                output = self.channel.recv(1024).decode()
+                output = self.channel.recv(50000).decode()
                 yield event.plain_result("指令执行成功")
                 yield event.plain_result(output)
         except Exception as e:
@@ -117,6 +117,11 @@ class SetuPlugin(Star):
                 new_host.append(d)
         self.all_host=new_host
 
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
+    @command("endssh")
+    async def end_ssh(self, event: AstrMessageEvent):
+        self.channel.close()
+        self.ssh.close()
     # @command("test")
     # async def test(self, event: AstrMessageEvent,com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
     #     yield event.plain_result(com_0+com_1+com_2+com_3+com_4+com_5+com_6)

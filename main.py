@@ -113,5 +113,5 @@ class SetuPlugin(Star):
         self.all_host=new_host
 
     @command("test")
-    async def test(self, event: AstrMessageEvent,com_0:str,com_1:str,com_2:str,com_3:str,com_4:str,com_5:str,com_6:str):
+    async def test(self, event: AstrMessageEvent,com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
         yield event.plain_result(com_0+com_1+com_2+com_3+com_4+com_5+com_6)

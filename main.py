@@ -85,9 +85,9 @@ class SetuPlugin(Star):
                     self.now_ssh["host"] = item.get("host")
                     self.now_ssh["password"] = item.get('password')
 
-                    while not self.stop_event.is_set():
-                        await asyncio.sleep(10)
-                    await event.plain_result("SSH 连接已断开")
+                    # while not self.stop_event.is_set():
+                    #     await asyncio.sleep(10)
+                    # await event.plain_result("SSH 连接已断开")
                 except Exception as e:
                     yield event.plain_result("连接失败",e)
                 break

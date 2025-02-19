@@ -99,7 +99,7 @@ class SetuPlugin(Star):
 
         yield event.plain_result(com)
         try:
-                self.channel.send(com)
+                self.channel.send(com+'\n')
                 await asyncio.sleep(1)
                 output = self.channel.recv(1024).decode()
                 yield event.plain_result("指令执行成功")

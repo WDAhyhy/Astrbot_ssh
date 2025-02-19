@@ -96,6 +96,7 @@ class SetuPlugin(Star):
         try:
             com=re.sub(r"^\[|\]$", "", com)
             self.channel.send(com+"\n")
+            yield event.plain_result(com)
             output = self.channel.recv(65535).decode()
             yield event.plain_result("指令执行成功")
             yield event.plain_result(output)

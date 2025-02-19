@@ -91,7 +91,7 @@ class SetuPlugin(Star):
     async def cmd(self, event: AstrMessageEvent, com: str):
         try:
             com=re.sub(r"^\[|\]$", "", com)
-            result = await asyncio.to_thread(self.conn.run, com, hide=True)
+            result = self.conn.run(com, hide=True,wait=True)
             yield event.plain_result("指令执行成功")
             yield event.plain_result(result.stdout)
         except Exception as e:

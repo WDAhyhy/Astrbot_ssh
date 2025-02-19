@@ -75,10 +75,11 @@ class SetuPlugin(Star):
             if item.get("name") == name:
                 try:
                     # 创建 SSH 客户端
-                    self.ssh = paramiko.SSHClient()
-                    self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                    self.ssh.connect(item.get("host"), username="root", password=item.get('password'))
-                    self.channel = self.ssh.invoke_shell()
+                    # self.ssh = paramiko.SSHClient()
+                    # self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    # self.ssh.connect(item.get("host"), username="root", password=item.get('password'))
+                    # self.channel = self.ssh.invoke_shell()
+                    self.conn=Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
                     yield event.plain_result("成功连接")
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
@@ -92,15 +93,18 @@ class SetuPlugin(Star):
                 break
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("cmd")
-    async def cmd(self, event: AstrMessageEvent, com: str):
+    async def cmd(self, event: AstrMessageEvent, com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
+        com=com_0+''+com_1+''+com_2+''+com_3+''+com_4+''+com_5+''+com_6
+        yield  com
+
         yield event.plain_result(com)
         try:
-            com=re.sub(r"^\[|\]$", "", com)
-            self.channel.send(com+"\n")
-            yield event.plain_result(com)
-            output = self.channel.recv(65535).decode()
+            # com=re.sub(r"^\[|\]$", "", com)
+            result=self.conn.run(com,hide=True)
+
+
             yield event.plain_result("指令执行成功")
-            yield event.plain_result(output)
+            yield event.plain_result(result.stdout)
         except Exception as e:
             yield event.plain_result("执行命令失败",e)
     def update_host(self):
@@ -112,6 +116,6 @@ class SetuPlugin(Star):
                 new_host.append(d)
         self.all_host=new_host
 
-    @command("test")
-    async def test(self, event: AstrMessageEvent,com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
-        yield event.plain_result(com_0+com_1+com_2+com_3+com_4+com_5+com_6)
+    # @command("test")
+    # async def test(self, event: AstrMessageEvent,com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
+    #     yield event.plain_result(com_0+com_1+com_2+com_3+com_4+com_5+com_6)

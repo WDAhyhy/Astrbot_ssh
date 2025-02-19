@@ -93,6 +93,7 @@ class SetuPlugin(Star):
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("cmd")
     async def cmd(self, event: AstrMessageEvent, com: str):
+        yield event.plain_result(com)
         try:
             com=re.sub(r"^\[|\]$", "", com)
             self.channel.send(com+"\n")

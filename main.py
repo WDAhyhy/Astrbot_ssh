@@ -75,11 +75,11 @@ class SetuPlugin(Star):
             if item.get("name") == name:
                 try:
                     # 创建 SSH 客户端
-                    # self.ssh = paramiko.SSHClient()
-                    # self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                    # self.ssh.connect(item.get("host"), username="root", password=item.get('password'))
-                    # self.channel = self.ssh.invoke_shell()
-                    self.conn=Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
+                    self.ssh = paramiko.SSHClient()
+                    self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    self.ssh.connect(item.get("host"), username="root", password=item.get('password'))
+                    self.channel = self.ssh.invoke_shell()
+                    # self.conn=Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
                     yield event.plain_result("成功连接")
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
@@ -99,17 +99,11 @@ class SetuPlugin(Star):
 
         yield event.plain_result(com)
         try:
-            if com.startswith("screen -s wx"):
-                yield event.plain_result("创建screen")
-                result = self.conn.run( "screen -S wx", hide=True,pty=True)
+                self.channel.send(com)
+                await asyncio.sleep(1)
+                output = self.channel.recv(1024).decode()
                 yield event.plain_result("指令执行成功")
-                yield event.plain_result(result.stdout.rstrip('\n'))
-            else:
-                # com=re.sub(r"^\[|\]$", "", com)
-                result=self.conn.run("screen -r wx && "+com,hide=True,pty=True)
-
-                yield event.plain_result("指令执行成功")
-                yield event.plain_result(result.stdout.rstrip('\n'))
+                yield event.plain_result(output)
         except Exception as e:
             yield event.plain_result("执行命令失败",e)
     def update_host(self):

@@ -72,6 +72,7 @@ class SetuPlugin(Star):
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("ssh")
     async  def my_ssh(self, event: AstrMessageEvent,name: str):
+        lastname=''
         for item in self.all_host:
             if item.get("name") == name:
                 try:

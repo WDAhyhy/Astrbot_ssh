@@ -93,6 +93,7 @@ class SetuPlugin(Star):
                     # await event.plain_result("SSH 连接已断开")
                 except Exception as e:
                     yield event.plain_result("连接失败"+str(e))
+                lastname = item.get("name")
                 break
             lastname = item.get("name")
         if lastname != name:

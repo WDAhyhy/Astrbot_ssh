@@ -15,7 +15,8 @@ username = "root"
 class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
-
+        self.all_host=[]
+        self.update_host()
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
@@ -23,6 +24,7 @@ class SetuPlugin(Star):
             conn = Connection(host=host, user="root", connect_kwargs={"password": password})
             result = conn.run("ls", hide=True)  # 运行一个简单命令
             yield event.plain_result("添加并测试成功！")
+            self.update_host()
             # 显示命令输出
         except Exception as e:
             yield event.plain_result("SSH 连接失败:", e)
@@ -57,6 +59,7 @@ class SetuPlugin(Star):
                         i+=1
             if i==len(lines)-1:
                 yield event.plain_result("删除成功")
+                self.update_host()
             else:
                 yield event.plain_result("删除失败，无此名称的ssh连接")
         except Exception as e:
@@ -65,10 +68,19 @@ class SetuPlugin(Star):
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("ssh")
     async  def my_ssh(self, event: AstrMessageEvent,name: str):
+        for item in self.all_host:
+            if item.get("name") == name:
+                try:
+                    conn = Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
+                    yield event.plain_result("成功连接")
+                except Exception as e:
+                    yield event.plain_result("连接失败",e)
+                break
+    def update_host(self):
+        new_host=[]
         with open("data.txt", "r", encoding="utf-8") as file:
             for line in file:
-                if line.strip().startswith(f"{name} "):
-                    name,host,password = line.strip().split(" ")
-                    conn = Connection(host=host, user="root", connect_kwargs={"password": password})
-                    break
-
+                name,host,password = line.strip().split(" ")
+                d={"name":name, "host":host, "password":password }
+                new_host.append(d)
+        self.all_host=new_host

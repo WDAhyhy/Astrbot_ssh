@@ -1,9 +1,12 @@
-
 from fabric import Connection
-# from astrbot.api.message_components import *
-# from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
-# from astrbot.api.star import Context, Star, register
-from astrbot.api.all import *
+import os
+import re
+import shutil
+import aiohttp  # 导入 aiohttp 用于发送 HTTP 请求
+from datetime import datetime
+from astrbot.api.event.filter import *
+from astrbot.api.event import AstrMessageEvent, MessageEventResult
+from astrbot.api.all import *  # 导入所有API
 host = "31.56.123.4"
 username = "root"
 
@@ -69,7 +72,7 @@ class SetuPlugin(Star):
                     conn = Connection(host=host, user="root", connect_kwargs={"password": password})
                     break
 
-    @permission_type(PermissionType.ADMIN)
-    @command("test")
-    async def test(self, event: AstrMessageEvent):
+    @command("cmd")  # 使用从 event.filter 导入的 command
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
+    async def cmd_ssh(self, event: AstrMessageEvent,name: str):
         pass

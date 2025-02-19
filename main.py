@@ -81,7 +81,7 @@ class SetuPlugin(Star):
                     self.now_ssh["password"] = item.get('password')
 
                     while not self.stop_event.is_set():
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(10)
                     await event.plain_result("SSH 连接已断开")
                 except Exception as e:
                     yield event.plain_result("连接失败",e)
@@ -91,10 +91,10 @@ class SetuPlugin(Star):
     async def cmd(self, event: AstrMessageEvent, com: str):
         try:
             com=re.sub(r"^\[|\]$", "", com)
-            result = self.conn.run(com, hide=True)
-            yield event.plain_result(result.stdout.rstrip("\n"))
+            result = await asyncio.to_thread(self.conn.run, com, hide=True)
+            await event.plain_result(result.stdout.rstrip("\n"))
         except Exception as e:
-            yield event.plain_result("执行命令失败",e)
+            await event.plain_result("执行命令失败",e)
     def update_host(self):
         new_host=[]
         with open("data.txt", "r", encoding="utf-8") as file:

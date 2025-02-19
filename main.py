@@ -7,8 +7,7 @@ from datetime import datetime
 from astrbot.api.event.filter import *
 from astrbot.api.event import AstrMessageEvent, MessageEventResult
 from astrbot.api.all import *  # 导入所有API
-host = "31.56.123.4"
-username = "root"
+import time
 
 @register("fish_ssh", "案板上的鹹魚", "ssh远程服务器", "1.0")
 
@@ -18,6 +17,8 @@ class SetuPlugin(Star):
         self.all_host=[]
         self.update_host()
         self.now_ssh={}
+        self.open=False
+        self.conn=None
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
@@ -72,11 +73,14 @@ class SetuPlugin(Star):
         for item in self.all_host:
             if item.get("name") == name:
                 try:
-                    conn = Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
+                    self.conn = Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
                     yield event.plain_result("成功连接")
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
                     self.now_ssh["password"] = item.get('password')
+                    self.open=True
+                    while self.open:
+                        time.sleep(10)
                 except Exception as e:
                     yield event.plain_result("连接失败",e)
                 break
@@ -85,8 +89,7 @@ class SetuPlugin(Star):
     async def cmd(self, event: AstrMessageEvent, com: str):
         try:
             com=re.sub(r"^\[|\]$", "", com)
-            conn = Connection(host=self.now_ssh.get("host"), user="root", connect_kwargs={"password": self.now_ssh.get('password')})
-            result = conn.run(com, hide=True)
+            result = self.conn.run(com, hide=True)
             yield event.plain_result(result.stdout.rstrip("\n"))
         except Exception as e:
             yield event.plain_result("执行命令失败",e)

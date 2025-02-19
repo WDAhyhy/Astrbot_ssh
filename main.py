@@ -91,7 +91,7 @@ class SetuPlugin(Star):
                     #     await asyncio.sleep(10)
                     # await event.plain_result("SSH 连接已断开")
                 except Exception as e:
-                    yield event.plain_result("连接失败"+e)
+                    yield event.plain_result("连接失败"+str(e))
                 break
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("cmd")
@@ -107,7 +107,7 @@ class SetuPlugin(Star):
                 yield event.plain_result("指令执行成功")
                 yield event.plain_result(output)
         except Exception as e:
-            yield event.plain_result("执行命令失败"+e)
+            yield event.plain_result("执行命令失败"+str(e))
     def update_host(self):
         new_host=[]
         with open("data.txt", "r", encoding="utf-8") as file:
@@ -125,7 +125,7 @@ class SetuPlugin(Star):
             self.ssh.close()
             yield event.plain_result("成功关闭")
         except Exception as e:
-            yield event.plain_result(e)
+            yield event.plain_result("出错了"+str(e))
     # @command("test")
     # async def test(self, event: AstrMessageEvent,com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
     #     yield event.plain_result(com_0+com_1+com_2+com_3+com_4+com_5+com_6)

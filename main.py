@@ -16,7 +16,7 @@ class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
 
-
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
         try:
@@ -31,7 +31,7 @@ class SetuPlugin(Star):
             f.write(f"{name} {host} {password}\n")
             f.close()
 
-
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("lsssh")
 
     async def ls_ssh(self, event: AstrMessageEvent):
@@ -41,7 +41,7 @@ class SetuPlugin(Star):
         except Exception as e:
             yield event.plain_result("读取失败，未检测到文件")
 
-
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("delssh")
     async def del_ssh(self, event: AstrMessageEvent,name: str):
         try:
@@ -62,7 +62,7 @@ class SetuPlugin(Star):
         except Exception as e:
             yield event.plain_result("删除失败",e)
 
-
+    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("ssh")
     async  def my_ssh(self, event: AstrMessageEvent,name: str):
         with open("data.txt", "r", encoding="utf-8") as file:
@@ -72,7 +72,3 @@ class SetuPlugin(Star):
                     conn = Connection(host=host, user="root", connect_kwargs={"password": password})
                     break
 
-    @command("cmd")  # 使用从 event.filter 导入的 command
-    @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
-    async def cmd_ssh(self, event: AstrMessageEvent,name: str):
-        pass

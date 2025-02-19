@@ -1,8 +1,9 @@
 
 from fabric import Connection
-from astrbot.api.message_components import *
-from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
-from astrbot.api.star import Context, Star, register
+# from astrbot.api.message_components import *
+# from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
+# from astrbot.api.star import Context, Star, register
+from astrbot.api.all import *
 host = "31.56.123.4"
 username = "root"
 
@@ -11,7 +12,7 @@ class SetuPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
 
-    @permission_type(PermissionType.ADMIN)
+
     @filter.command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
         try:
@@ -35,7 +36,7 @@ class SetuPlugin(Star):
         except Exception as e:
             yield event.plain_result("读取失败，未检测到文件")
 
-    @permission_type(PermissionType.ADMIN)
+
     @filter.command("delssh")
     async def del_ssh(self, event: AstrMessageEvent,name: str):
         try:
@@ -56,7 +57,7 @@ class SetuPlugin(Star):
         except Exception as e:
             yield event.plain_result("删除失败",e)
 
-    @permission_type(PermissionType.ADMIN)
+
     @filter.command("ssh")
     async  def my_ssh(self, event: AstrMessageEvent,name: str):
         with open("data.txt", "r", encoding="utf-8") as file:

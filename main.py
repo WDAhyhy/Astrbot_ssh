@@ -100,7 +100,7 @@ class SetuPlugin(Star):
         yield event.plain_result(com)
         try:
             # com=re.sub(r"^\[|\]$", "", com)
-            result=self.conn.run(com,hide=True)
+            result=self.conn.run(com,hide=True,pty=True)
 
 
             yield event.plain_result("指令执行成功")

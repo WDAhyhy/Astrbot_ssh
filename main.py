@@ -9,7 +9,7 @@ from astrbot.api.event import AstrMessageEvent, MessageEventResult
 from astrbot.api.all import *  # 导入所有API
 import asyncio
 import time
-
+import paramiko
 @register("fish_ssh", "案板上的鹹魚", "ssh远程服务器", "1.0")
 
 class SetuPlugin(Star):
@@ -19,7 +19,7 @@ class SetuPlugin(Star):
         self.update_host()
         self.now_ssh={}
         self.stop_event = asyncio.Event()  # 控制 SSH 连接
-        self.conn=None
+        self.ssh=None
     @permission_type(PermissionType.ADMIN)  # 仅限管理员使用
     @command("addssh")
     async def add_ssh(self, event: AstrMessageEvent,name: str,host: str ,password: str="Qwer3866373"):
@@ -74,7 +74,11 @@ class SetuPlugin(Star):
         for item in self.all_host:
             if item.get("name") == name:
                 try:
-                    self.conn = Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
+                    # 创建 SSH 客户端
+                    self.ssh = paramiko.SSHClient()
+                    self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    self.ssh.connect(item.get("host"), username="root", password=item.get('password'))
+                    self.channel = self.ssh.invoke_shell()
                     yield event.plain_result("成功连接")
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
@@ -91,9 +95,10 @@ class SetuPlugin(Star):
     async def cmd(self, event: AstrMessageEvent, com: str):
         try:
             com=re.sub(r"^\[|\]$", "", com)
-            result = self.conn.run(com, hide=True)
+            self.channel.send(com)
+            output = self.channel.recv(1024).decode('utf-8')
             yield event.plain_result("指令执行成功")
-            yield event.plain_result(result.stdout)
+            yield event.plain_result(output)
         except Exception as e:
             yield event.plain_result("执行命令失败",e)
     def update_host(self):

@@ -95,7 +95,7 @@ class SetuPlugin(Star):
     async def cmd(self, event: AstrMessageEvent, com: str):
         yield event.plain_result(com)
         try:
-            # com=re.sub(r"^\[|\]$", "", com)
+            com=re.sub(r"^\[|\]$", "", com)
             self.channel.send(com+"\n")
             yield event.plain_result(com)
             output = self.channel.recv(65535).decode()
@@ -111,3 +111,7 @@ class SetuPlugin(Star):
                 d={"name":name, "host":host, "password":password }
                 new_host.append(d)
         self.all_host=new_host
+
+    @command("test")
+    async def test(self, event: AstrMessageEvent,com:str):
+        yield event.plain_result(com)

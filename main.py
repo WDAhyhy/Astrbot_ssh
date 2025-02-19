@@ -80,6 +80,7 @@ class SetuPlugin(Star):
                     # self.ssh.connect(item.get("host"), username="root", password=item.get('password'))
                     # self.channel = self.ssh.invoke_shell()
                     self.conn=Connection(host=item.get("host"), user="root", connect_kwargs={"password": item.get('password')})
+                    self.shell = self.conn.shell()
                     yield event.plain_result("成功连接")
                     self.now_ssh["name"] = item.get("name")
                     self.now_ssh["host"] = item.get("host")
@@ -100,11 +101,18 @@ class SetuPlugin(Star):
         yield event.plain_result(com)
         try:
             # com=re.sub(r"^\[|\]$", "", com)
-            result=self.conn.run(com,hide=True,pty=True)
-
-
+            # result=self.conn.run(com,hide=True,pty=True)
+            self.shell.stdin.write(com+"\n")
+            self.shell.stdin.flush()
+            output = ""
+            while True:
+                # 检查是否有输出可读取
+                if self.shell.recv_ready():
+                    output += self.shell.recv(1024).decode('utf-8')  # 读取 1024 字节并解码为 utf-8
+                if len(output) > 0:  # 根据需要设置退出条件
+                    break
             yield event.plain_result("指令执行成功")
-            yield event.plain_result(result.stdout)
+            yield event.plain_result(output)
         except Exception as e:
             yield event.plain_result("执行命令失败",e)
     def update_host(self):

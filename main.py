@@ -95,8 +95,8 @@ class SetuPlugin(Star):
     async def cmd(self, event: AstrMessageEvent, com: str):
         try:
             com=re.sub(r"^\[|\]$", "", com)
-            self.channel.send(com)
-            output = self.channel.recv(1024).decode('utf-8')
+            self.channel.send(com+"\n")
+            output = self.channel.recv(65535).decode()
             yield event.plain_result("指令执行成功")
             yield event.plain_result(output)
         except Exception as e:

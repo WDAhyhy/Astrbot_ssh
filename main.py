@@ -93,7 +93,7 @@ class SetuPlugin(Star):
             com=re.sub(r"^\[|\]$", "", com)
             result = await asyncio.to_thread(self.conn.run, com, hide=True)
             yield event.plain_result("指令执行成功")
-            yield event.plain_result(result.stdout.rstrip("\n"))
+            yield event.plain_result(result.stdout)
         except Exception as e:
             yield event.plain_result("执行命令失败",e)
     def update_host(self):

@@ -103,7 +103,7 @@ class SetuPlugin(Star):
     @command("cmd")
     async def cmd(self, event: AstrMessageEvent, com_0:str,com_1:str='',com_2:str='',com_3:str='',com_4:str='',com_5:str='',com_6:str=''):
         com=com_0+' '+com_1+' '+com_2+' '+com_3+' '+com_4+' '+com_5+' '+com_6
-        yield  com
+        com=com.rstrip()
 
         yield event.plain_result(com)
         try:
